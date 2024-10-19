@@ -11,7 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //
+        Schema::create('seats', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('schedule_id')->constrained()->onDelete('cascade');
+            $table->string('seat_number');
+            $table->enum('status', ['sedia', 'tidak tersedia'])->default('sedia');
+            $table->timestamps();
+        });
     }
 
     /**

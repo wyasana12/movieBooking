@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Film;
-use Illuminate\Container\Attributes\Storage;
+// use Illuminate\Container\Attributes\Storage;
+use Illuminate\Support\Facades\Storage;
 
 class MovieController extends Controller
 {
@@ -22,26 +23,21 @@ class MovieController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'poster' => 'nullable|image|mimes:jpg,png,jpeg|max:1000',
+            'poster' => 'required|image|mimes:jpg,png,jpeg|max:2048',
             'judul' => 'required|string|max:255',
             'deskripsi' => 'required|string',
-            'genre' => 'required|string',
+            'genre' => 'required|array',
             'tanggalRilis' => 'required|date'
         ]);
 
-        if ($request->hasFile('poster')) {
-            // Simpan file poster dengan nama unik di storage/public/poster
-            $image = $request->file('poster');
-            $imageName = $image->hashName();  // Mendapatkan nama unik untuk file
-            $image->storeAs('public/poster', $imageName);  // Simpan di folder public/storage/poster
-    
-            // Tambahkan nama file ke data yang akan disimpan
-            $validatedData['poster'] = 'poster/' . $imageName;
-        } else {
-            // Jika tidak ada gambar yang diunggah, biarkan null
-            $validatedData['poster'] = null;
+        if ($request->has('genre')) {
+            $validatedData['genre'] = implode(', ', $request->input('genre'));
         }
-        
+
+        if ($request->hasFile('poster')) {
+            $validatedData['poster'] = $request->file('poster')->store('posters', 'public');
+        }
+
         Film::create($validatedData);
 
         return redirect()->route('admin.dashboard.film')->with('success', 'Film Berhasil Ditambahkan');
@@ -55,7 +51,7 @@ class MovieController extends Controller
     public function update(Request $request, Film $film)
     {
         $validatedData = $request->validate([
-            'poster' => 'nullable|image|mimes:jpg,png,jpeg|max:1000',
+            'poster' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
             'judul' => 'required|string|max:255',
             'deskripsi' => 'required|string',
             'genre' => 'required|string',

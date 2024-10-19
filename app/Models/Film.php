@@ -25,5 +25,10 @@ class Film extends Model
         }
         return asset('images/default-poster.png'); // Gambar default jika tidak ada poster
     }
+
+    public function schedules()
+    {
+        return $this->hasMany(Schedule::class);
+    }
     
 }

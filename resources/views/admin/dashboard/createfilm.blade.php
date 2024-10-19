@@ -2,7 +2,7 @@
 
 @section('content')
     <h1>Film Add</h1>
-    <form action="{{ url('/admin/movies/store') }}" method="POST" enctype="multipart/form-data">
+    <form action="{{ route('admin.movies.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
 
         <div class="form-group">
@@ -17,9 +17,42 @@
         </div>
 
         <div class="form-group">
-            <label for="genre">Genre</label>
-            <input type="text" class="form-control" id="genre" name="genre"
-                value="{{ old('genre', $film->genre ?? '') }}" required>
+            <label for="genre">Genre</label><br>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="genre[]" value="Action" id="action"
+                    {{ in_array('Action', old('genre', [])) ? 'checked' : '' }}>
+                <label class="form-check-label" for="action">Action</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="genre[]" value="Comedy" id="comedy"
+                    {{ in_array('Comedy', old('genre', [])) ? 'checked' : '' }}>
+                <label class="form-check-label" for="comedy">Comedy</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="genre[]" value="Drama" id="drama"
+                    {{ in_array('Drama', old('genre', [])) ? 'checked' : '' }}>
+                <label class="form-check-label" for="drama">Drama</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="genre[]" value="Horror" id="horror"
+                    {{ in_array('Horror', old('genre', [])) ? 'checked' : '' }}>
+                <label class="form-check-label" for="horror">Horror</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="genre[]" value="Romance" id="romance"
+                    {{ in_array('Romance', old('genre', [])) ? 'checked' : '' }}>
+                <label class="form-check-label" for="romance">Romance</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="genre[]" value="Animation" id="animation"
+                    {{ in_array('Animation', old('genre', [])) ? 'checked' : '' }}>
+                <label class="form-check-label" for="animation">Animation</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="genre[]" value="Thriller" id="thriller"
+                    {{ in_array('Thriller', old('genre', [])) ? 'checked' : '' }}>
+                <label class="form-check-label" for="thriller">Thriller</label>
+            </div>
         </div>
 
         <div class="form-group">

@@ -25,13 +25,13 @@ Route::get('admin/dashboard', function() {
 });
 Route::get('admin/movies', [MovieController::class, 'index'])->name('admin.dashboard.film');
 Route::get('admin/movies/create', [MovieController::class, 'create'])->name('admin.dashboard.createfilm');
-Route::post('admin/movies/store', [MovieController::class, 'store']);
+Route::post('admin/movies/store', [MovieController::class, 'store'])->name('admin.movies.store');
 Route::get('admin/movies/edit', [MovieController::class, 'edit'])->name('admin.dashboard.editfilm');
 Route::post('admin/movies/update', [MovieController::class, 'update']);
 Route::delete('admin/movies/{id}',[MovieController::class, 'destroy']);
 
 Route::get('admin/schedules', [SchedulesController::class, 'index'])->name('admin.dashboard.schedules');
-Route::get('admin/schedules/create', [SchedulesController::class, 'create'])->name('admin.dashboard.creatschedules');
+Route::get('admin/schedules/create', [SchedulesController::class, 'create'])->name('admin.dashboard.createschedules');
 Route::post('admin/schedules/store', [SchedulesController::class, 'store']);
 Route::get('admin/schedules/edit', [SchedulesController::class, 'edit'])->name('admin.dashboard.editschedules');
 Route::post('admin/schedules/update', [SchedulesController::class, 'update']);

@@ -11,15 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('films', function (Blueprint $table) {
+        Schema::create('genres', function(Blueprint $table) {
             $table->id();
-            $table->string('poster')->nullable();
-            $table->string('judul');
-            $table->text('deskripsi')->nullable();
-            $table->foreignId('genres_id')->constrained()->onDelete('cascade');
-            $table->date('tanggalRilis');
-            $table->rememberToken();
-            $table->timestamps();
+            $table->string('genre');
         });
     }
 

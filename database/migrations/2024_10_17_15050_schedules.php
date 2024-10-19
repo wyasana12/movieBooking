@@ -11,14 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('films', function (Blueprint $table) {
+        Schema::create('schedules', function (Blueprint $table) {
             $table->id();
-            $table->string('poster')->nullable();
-            $table->string('judul');
-            $table->text('deskripsi')->nullable();
-            $table->foreignId('genres_id')->constrained()->onDelete('cascade');
-            $table->date('tanggalRilis');
-            $table->rememberToken();
+            $table->foreignId('films_id')->constrained()->onDelete('cascade');
+            $table->foreignId('time_slot_id')->constrained()->onDelete('cascade');
+            $table->date('show_date');
+            $table->integer('total_seats')->default(200);
             $table->timestamps();
         });
     }
