@@ -26,7 +26,7 @@
                         <td>{{ $index + $schedules->firstItem() }}</td>
                         <td>{{ $schedule->film->judul }}</td>
                         <td>{{ $schedule->show_date }}</td>
-                        <td>{{ $schedule->time_slot->slot }}</td>
+                        <td>{{ $schedule->start_time }} - {{ $schedule->end_time }}</td>
                         <td>{{ $schedule->total_seats }}</td>
                         <td>
                             <form action="{{ url('admin/schedules/' . $schedule->id) }}" method="POST"
@@ -45,6 +45,7 @@
                 @endforelse
             </tbody>
         </table>
+        
         {{ $schedules->links() }}
     </div>
 @endsection

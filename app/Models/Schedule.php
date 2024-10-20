@@ -14,7 +14,9 @@ class Schedule extends Model
         'films_id',
         'time_slot_id',
         'show_date',
-        'total_seats'
+        'total_seats',
+        'start_time',
+        'end_time',
     ];
 
     public function film()

@@ -27,7 +27,8 @@ class MovieController extends Controller
             'judul' => 'required|string|max:255',
             'deskripsi' => 'required|string',
             'genre' => 'required|array',
-            'tanggalRilis' => 'required|date'
+            'tanggalRilis' => 'required|date',
+            'duration' => 'required|integer|min:1',
         ]);
 
         if ($request->has('genre')) {
@@ -51,33 +52,45 @@ class MovieController extends Controller
     public function update(Request $request, Film $film)
     {
         $validatedData = $request->validate([
-            'poster' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'poster' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Mengubah required menjadi nullable
             'judul' => 'required|string|max:255',
             'deskripsi' => 'required|string',
-            'genre' => 'required|string',
-            'tanggalRilis' => 'required|date'
+            'genre' => 'required|array',
+            'tanggalRilis' => 'required|date',
+            'duration' => 'required|integer|min:1',
         ]);
 
+        if ($request->has('genre')) {
+            $validatedData['genre'] = implode(', ', $request->input('genre'));
+        }
+
+        // Jika ada file poster yang diunggah
         if ($request->hasFile('poster')) {
-            // Hapus poster lama
+            // Hapus poster lama jika ada
             if ($film->poster) {
                 Storage::delete('public/' . $film->poster);
             }
+            // Simpan poster baru
             $validatedData['poster'] = $request->file('poster')->store('posters', 'public');
         }
 
+        // Update film dengan data yang sudah divalidasi
         $film->update($validatedData);
-
-        $film->update($request->all());
 
         return redirect()->route('admin.dashboard.film')->with('success', 'Film Telah Terupdate');
     }
 
-    public function destroy($id)
-    {
-        $film = film::findorfail($id);
 
+    public function destroy(Film $film)
+    {
+        // Hapus poster dari storage jika ada
+        if ($film->poster) {
+            Storage::delete('public/' . $film->poster);
+        }
+
+        // Hapus film dari database
         $film->delete();
-        return redirect()->route('admin.dashboard.film')->with('success', 'Film Berhasil Dihapus');
+
+        return redirect()->route('admin.dashboard.film')->with('success', 'Film Telah Dihapus');
     }
 }

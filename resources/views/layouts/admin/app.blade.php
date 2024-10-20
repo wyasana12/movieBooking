@@ -36,7 +36,7 @@
 @include('layouts.admin.header')
 @include('layouts.admin.aside')
 
-<main id="main" class="main" style="height: 100vh">
+<main id="main" class="main">
 @yield('content')
 </main>
 @include('layouts.admin.footer')

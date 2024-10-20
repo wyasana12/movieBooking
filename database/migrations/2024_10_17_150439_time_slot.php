@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('time_slots', function (Blueprint $table) {
             $table->id();
             $table->time('slot');
+            $table->decimal('price', 8, 2);
             $table->timestamps();
         });
     }

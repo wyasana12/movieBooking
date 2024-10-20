@@ -11,6 +11,7 @@ class Time_Slot extends Model
     protected $table = 'time_slots';
 
     protected $fillable = [
-        'slot'
+        'slot',
+        'price'
     ];
 }

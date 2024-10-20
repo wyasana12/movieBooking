@@ -62,6 +62,12 @@
         </div>
 
         <div class="form-group">
+            <label for="duration">Durasi</label>
+            <input type="number" class="form-control" id="duration" name="duration"
+                value="{{ old('duration', $film->duration ?? '') }}" required>
+        </div>
+
+        <div class="form-group">
             <label for="poster">Poster</label>
             <input type="file" class="form-control" id="poster" name="poster">
         </div>

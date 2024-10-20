@@ -17,6 +17,7 @@
                 <th>Deskripsi</th>
                 <th>Genre</th>
                 <th>Tanggal Rilis</th>
+                <th>Durasi</th>
                 <th>Action</th>
             </tr>
         </thead>
@@ -32,13 +33,13 @@
                     <td>{!! $item->deskripsi !!}</td>
                     <td>{{ $item->genre }}</td>
                     <td>{{ $item->tanggalRilis }}</td>
+                    <td>{{ $item->duration }}</td>
                     <td>
                         <a href="{{ route('admin.dashboard.editfilm', $item) }}" class="btn btn-warning">Edit</a>
-                        <form action="{{ url('admin/movies/{id}', $item->id) }}" method="POST" style="display:inline-block;">
+                        <form action="{{ route('admin.dashboard.film.destroy', $item->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus film ini?');">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="btn btn-danger"
-                                onclick="return confirm('Are you sure?')">Delete</button>
+                            <button type="submit" class="btn btn-danger">Hapus</button>
                         </form>
                     </td>
                 </tr>

@@ -22,17 +22,20 @@
         <label for="end_date">Tanggal Selesai:</label>
         <input type="date" name="end_date" class="form-control" required>
         </div>
-
+        
+        <div class="form-group">
+            <label for="start_time">Waktu Mulai:</label>
+            <input type="time" name="start_time" class="form-control" value="{{ old('start_time') }}" required>
+        </div>
         <button type="submit" class="btn btn-success">Buat Jadwal Otomatis</button>
     </form>
 
     <ul>
         @foreach ($schedules as $schedule)
-            <li>
-                <p>{{ $schedule->show_date }} - {{ $schedule->time_slot->slot }}</p>
-                <!-- Ubah timeSlot menjadi time_slot -->
-                <a href="{{ route('schedule.seats', $schedule->id) }}">Pilih Kursi</a>
-            </li>
-        @endforeach
+        <li>
+            <p>{{ $schedule->show_date }} - {{ $schedule->start_time }} s/d {{ $schedule->end_time }}</p>
+            <a href="{{ route('schedule.seats', $schedule->id) }}">Pilih Kursi</a>
+        </li>
+    @endforeach
     </ul>
 @endsection

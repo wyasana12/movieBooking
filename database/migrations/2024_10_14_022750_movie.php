@@ -18,6 +18,7 @@ return new class extends Migration
             $table->text('deskripsi')->nullable();
             $table->foreignId('genres_id')->constrained()->onDelete('cascade');
             $table->date('tanggalRilis');
+            $table->integer('duration');
             $table->rememberToken();
             $table->timestamps();
         });
