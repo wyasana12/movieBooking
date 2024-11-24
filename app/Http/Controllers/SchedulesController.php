@@ -35,7 +35,10 @@ class SchedulesController extends Controller
             'price' => 'required|numeric|min:0',
         ]);
 
-        $film = Film::where('id',$request->film_id)->where('status', 'now_playing')->first();
+        $film = Film::where('id',$request->film_id)->where('status', 'now playing')->first();
+        if (!$film) {
+            return back()->withErrors(['film' => 'Film not found or not currently playing.']);
+        }
         $filmDuration = $film->duration;
 
         $startDate = Carbon::parse($request->input('start_date'));

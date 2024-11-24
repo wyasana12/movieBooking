@@ -31,4 +31,9 @@ class Booking extends Model
     {
         return $this->belongsTo(Seats::class);
     }
+
+    public function bookingservice()
+    {
+        return $this->belongsToMany(service::class, 'booking-service')->withPivot('jumlah')->withTimestamps();
+    }
 }

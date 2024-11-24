@@ -44,6 +44,19 @@
                     @endforeach
                 </div>
             </div>
+            <div class="services mt-4">
+                <h5>Layanan Tambahan</h5>
+                <div class="row">
+                    @foreach ($service as $item)
+                        <div class="col-md-4">
+                            <label class="form-check-label">
+                                <input type="checkbox" name="services[]" value="{{ $item->id }}" class="form-check-input">
+                                {{ $item->nama }} (Rp{{ number_format($item->price, 0, ',', '.') }})
+                            </label>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
 
             @if (session('error'))
                 <div class="alert alert-danger mt-3">
