@@ -5,22 +5,20 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Schedule;
 use App\Models\Film;
-use App\Models\Time_Slot;
 use App\Models\Seats;
-use Illuminate\Auth\Events\Validated;
 use Carbon\Carbon;
 
 class SchedulesController extends Controller
 {
     public function index()
     {
-        $schedules = Schedule::with(['film', 'time_slot'])->latest()->paginate(10);
+        $schedules = Schedule::with(['film'])->latest()->paginate(10);
         return view('admin.dashboard.schedules', compact('schedules'));
     }
 
     public function create()
     {
-        $data['films'] = Film::all();
+        $data['films'] = Film::where('status', 'now playing')->get();
         $data['schedules'] = [];
         return view('admin.dashboard.createschedules', $data);
     }
@@ -28,42 +26,52 @@ class SchedulesController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'film_id' => 'required|exists:films,id', // Validasi ID film
+            'film_id' => 'required|exists:films,id',
+            'studio' => 'required|integer|min:1|max:5',
             'start_date' => 'required|date',
-            'end_date' => 'required|date|after_or_equal:start_date', // Pastikan end_date tidak sebelum start_date
+            'end_date' => 'required|date|after_or_equal:start_date',
+            'start_time' => 'required|date_format:H:i',
+            'end_time' => 'required|date_format:H:i|after:start_time',
+            'price' => 'required|numeric|min:0',
         ]);
 
-        $film = Film::findorfail($request->film_id);
-        $time_slots = Time_Slot::all();
+        $film = Film::where('id',$request->film_id)->where('status', 'now_playing')->first();
         $filmDuration = $film->duration;
 
-        $startDate = \Carbon\Carbon::parse($request->input('start_date'));
-        $endDate = \Carbon\Carbon::parse($request->input('end_date'));
+        $startDate = Carbon::parse($request->input('start_date'));
+        $endDate = Carbon::parse($request->input('end_date'));
 
+        $startTime = Carbon::parse($request->input('start_time'));
+        $endTime = Carbon::parse($request->input('end_time'));
 
-        $currentDate = $startDate;
-        while ($currentDate <= $endDate) {
-            foreach ($time_slots as $item) {
-                $startTime = Carbon::parse($item->slot);
-                $endTime = $startTime->copy()->addMinutes($filmDuration);
-                
+        $currentDate = $startDate->copy();
+
+        // Loop untuk membuat jadwal per hari dalam rentang waktu yang diberikan
+        while ($currentDate->lte($endDate)) {
+            $currentStartTime = $startTime->copy();
+
+            // Loop untuk membuat waktu tayang film berdasarkan durasi film
+            while ($currentStartTime->copy()->addMinutes($filmDuration)->lte($endTime)) {
                 $schedule = Schedule::create([
                     'films_id' => $film->id,
-                    'time_slot_id' => $item->id,
-                    'show_date' => $currentDate,
+                    'studio' => $request->studio,
+                    'show_date' => $currentDate->format('Y-m-d'),
+                    'start_time' => $currentStartTime->format('H:i'),
+                    'end_time' => $currentStartTime->copy()->addMinutes($filmDuration)->format('H:i'),
                     'total_seats' => 150,
-                    'start_time' => $startTime->format('H:i'),
-                    'end_time' => $endTime->format('H:i'),
+                    'price' => $request->price,
                 ]);
 
-                $this->createSeats($schedule);
+                $this->createSeats($schedule);  // Membuat kursi untuk jadwal tersebut
+                $currentStartTime->addMinutes($filmDuration); // Pindah ke waktu tayang berikutnya
             }
 
-            $currentDate->addDay();
+            $currentDate = $currentDate->addDay(); // Pindah ke hari berikutnya
         }
 
-        return redirect()->route('admin.dashboard.schedules')->with('success', 'Schedules Berhasil Dibuat');
+        return redirect()->route('admin.dashboard.schedules')->with('success', 'Schedules berhasil dibuat.');
     }
+
 
     private function createSeats($schedule)
     {

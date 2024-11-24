@@ -20,7 +20,6 @@
                     <div class="flex justify-between items-center mb-2">
                         <span class="bg-blue-500 text-xs font-bold px-2 py-1 rounded">{{ $item->genre }}</span>
                     </div>
-                    <p class="text-red-500 text-xs mb-4">*Advance Ticket Sales</p>
                     <a href="{{ route('user.film.show', $item->id) }}" class="block w-full bg-blue-500 text-center px-4 py-2 rounded-md hover:bg-blue-600">Lihat Detail</a>
                 </div>
             </div>

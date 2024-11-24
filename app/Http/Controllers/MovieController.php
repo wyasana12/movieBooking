@@ -29,6 +29,7 @@ class MovieController extends Controller
             'genre' => 'required|array',
             'tanggalRilis' => 'required|date',
             'duration' => 'required|integer|min:1',
+            'status' => 'required|in:now playing,upcoming,expired',
         ]);
 
         if ($request->has('genre')) {
@@ -52,12 +53,13 @@ class MovieController extends Controller
     public function update(Request $request, Film $film)
     {
         $validatedData = $request->validate([
-            'poster' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Mengubah required menjadi nullable
+            'poster' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'judul' => 'required|string|max:255',
             'deskripsi' => 'required|string',
             'genre' => 'required|array',
             'tanggalRilis' => 'required|date',
             'duration' => 'required|integer|min:1',
+            'status' => 'required|in:now playing,upcoming,expired',
         ]);
 
         if ($request->has('genre')) {

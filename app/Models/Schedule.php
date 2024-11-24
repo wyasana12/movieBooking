@@ -12,11 +12,12 @@ class Schedule extends Model
 
     protected $fillable = [
         'films_id',
-        'time_slot_id',
+        'studio',
         'show_date',
         'total_seats',
         'start_time',
         'end_time',
+        'price',
     ];
 
     public function film()
@@ -27,10 +28,5 @@ class Schedule extends Model
     public function Seats()
     {
         return $this->hasMany(Seats::class);
-    }
-
-    public function time_slot()
-    {
-        return $this->belongsTo(Time_Slot::class);
     }
 }

@@ -1,45 +1,81 @@
 @extends('layouts.app')
-
 @section('content')
-    <div class="container mx-auto px-4 py-8">
-        <div class="bg-white shadow-lg rounded-lg overflow-hidden max-w-2xl mx-auto">
-            <!-- Poster di tengah -->
-            <div class="flex justify-center p-4">
-                <img class="w-64 h-96 object-cover rounded" src="{{ asset('storage/' . $film->poster) }}"
-                    alt="{{ $film->judul }}">
+<div class="container py-4">
+    <div class="card shadow mx-auto" style="max-width: 800px;">
+        <!-- Poster di tengah -->
+        <div class="text-center p-4">
+            <img class="img-fluid rounded" 
+                 src="{{ asset('storage/' . $film->poster) }}" 
+                 alt="{{ $film->judul }}"
+                 style="max-height: 400px; object-fit: cover;">
+        </div>
+
+        <!-- Informasi film -->
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+                <h1 class="card-title h2 mb-0">{{ $film->judul }}</h1>
+                <span class="badge bg-success">{{ $film->duration }} Minutes</span>
             </div>
 
-            <!-- Informasi film -->
-            <div class="p-6">
-                <h1 class="text-2xl font-bold text-gray-900 mb-2">{{ $film->judul }}</h1>
-                <div class="text-lg text-gray-600 mb-4">{{ $film->genre }}</div>
-                <p class="text-gray-700 text-base mb-4">{!! $film->deskripsi !!}</p>
-                <div class="mb-2">
-                    <span class="text-gray-500 font-semibold">Rilis:</span>
-                    <span class="text-gray-900">{{ date('d/m/Y', strtotime($film->tanggalRilis)) }}</span>
+            <div class="mb-4">
+                <div class="row mb-2">
+                    <div class="col-md-3 text-muted">Genre</div>
+                    <div class="col-md-9">: {{ $film->genre }}</div>
                 </div>
-                <div class="mb-4">
-                    <span class="text-gray-500 font-semibold">Durasi:</span>
-                    <span class="text-gray-900">{{ $film->duration }} menit</span>
+                
+                <div class="row mb-2">
+                    <div class="col-md-3 text-muted">Status</div>
+                    <div class="col-md-9">: {{ $film->status }}</div>
                 </div>
-                <div class="mt-6">
-                    <h3 class="mt-4 text-lg font-semibold">Jadwal untuk Film {{ $film->judul }}</h3>
+
+                <div class="row mb-2">
+                    <div class="col-md-3 text-muted">Tanggal Rilis</div>
+                    <div class="col-md-9">: {{ date('d/m/Y', strtotime($film->tanggalRilis)) }}</div>
+                </div>
+
+                <div class="row mb-2">
+                    <div class="col-md-3 text-muted">Durasi</div>
+                    <div class="col-md-9">: {{ $film->duration }} menit</div>
+                </div>
+            </div>
+
+            <!-- Deskripsi -->
+            <div class="mt-4">
+                <h5 class="mb-3">Deskripsi</h5>
+                <p class="text-muted">{!! $film->deskripsi !!}</p>
+            </div>
+
+            <!-- Jadwal untuk Film -->
+            <div class="mt-4">
+                <h5 class="mb-3">Jadwal untuk Film {{ $film->judul }}</h5>
                 @if($schedules->isEmpty())
-                    <span class="text-red-500">Jadwal tidak tersedia</span>
+                    <div class="alert alert-danger">
+                        Jadwal tidak tersedia
+                    </div>
                 @else
-                    <ul>
+                    <div class="row g-2">
                         @foreach ($schedules as $schedule)
-                            <li>
-                                Tanggal: {{ $schedule->show_date }} | Jam: {{ $schedule->start_time }}
-                                <a href="{{ route('user.booking.index', $schedule->id) }}" class="ml-4 bg-blue-500 hover:bg-blue-700 font-bold py-1 px-3 rounded">
-                                    Pesan Tiket
-                                </a>
-                            </li>
+                            <div class="col-12 col-md-6">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <div class="mb-1"><strong>Tanggal:</strong> {{ $schedule->show_date }}</div>
+                                                <div><strong>Jam:</strong> {{ $schedule->start_time }}</div>
+                                            </div>
+                                            <a href="{{ route('user.booking.index', $schedule->id) }}" 
+                                               class="btn btn-primary">
+                                                Pesan Tiket
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         @endforeach
-                    </ul>
+                    </div>
                 @endif
-                </div>
             </div>
         </div>
     </div>
+</div>
 @endsection

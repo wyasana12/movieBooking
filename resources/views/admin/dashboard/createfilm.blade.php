@@ -6,6 +6,11 @@
         @csrf
 
         <div class="form-group">
+            <label for="poster">Poster</label>
+            <input type="file" class="form-control" id="poster" name="poster">
+        </div>
+
+        <div class="form-group">
             <label for="judul">Judul</label>
             <input type="text" class="form-control" id="judul" name="judul"
                 value="{{ old('judul', $film->judul ?? '') }}" required>
@@ -68,8 +73,12 @@
         </div>
 
         <div class="form-group">
-            <label for="poster">Poster</label>
-            <input type="file" class="form-control" id="poster" name="poster">
+            <label for="status">Status</label>
+            <select name="status" required>
+                <option value="now playing">Now Playing</option>
+                <option value="upcoming">UpComing</option>
+                <option value="expired">Expired</option>
+            </select>
         </div>
 
         <button type="submit" class="btn btn-success">Submit</button>

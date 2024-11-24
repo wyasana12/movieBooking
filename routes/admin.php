@@ -1,0 +1,33 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\LoginController;
+use App\Http\Controllers\Admin\RegisterController;
+use App\Http\Controllers\MovieController;
+use App\Http\Controllers\SchedulesController;
+
+Route::prefix('admin')->middleware(['guest:admin'])->group(function () {
+    Route::get('register', [RegisterController::class, 'create'])->name('admin.register');
+    Route::post('register', [RegisterController::class, 'store']);
+
+    Route::get('login', [LoginController::class, 'create'])->name('admin.login');
+    Route::post('login', [LoginController::class, 'store']);
+});
+
+Route::prefix('admin')->middleware(['auth:admin', 'role:admin'])->group(function () {
+    Route::get('dashboard', function () {
+        return view('admin.dashboard');
+    })->name('admin.dashboard');
+    Route::get('movies', [MovieController::class, 'index'])->name('admin.dashboard.film');
+    Route::get('movies/create', [MovieController::class, 'create'])->name('admin.dashboard.createfilm');
+    Route::post('movies/store', [MovieController::class, 'store'])->name('admin.movies.store');
+    Route::get('movies/{film}/edit', [MovieController::class, 'edit'])->name('admin.dashboard.editfilm');
+    Route::put('movies/edit/{film}', [MovieController::class, 'update'])->name('admin.dashboard.film.update');
+    Route::delete('movies/{film}', [MovieController::class, 'destroy'])->name('admin.dashboard.film.destroy');
+
+    Route::get('schedules', [SchedulesController::class, 'index'])->name('admin.dashboard.schedules');
+    Route::get('schedules/create', [SchedulesController::class, 'create'])->name('admin.dashboard.createschedules');
+    Route::post('schedules/store', [SchedulesController::class, 'store']);
+    Route::delete('schedules/{id}', [SchedulesController::class, 'destroy']);
+    Route::post('logout', [LoginController::class, 'destroy'])->name('admin.logout');
+});

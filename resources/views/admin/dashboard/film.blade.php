@@ -18,6 +18,7 @@
                 <th>Genre</th>
                 <th>Tanggal Rilis</th>
                 <th>Durasi</th>
+                <th>Status</th>
                 <th>Action</th>
             </tr>
         </thead>
@@ -34,6 +35,7 @@
                     <td>{{ $item->genre }}</td>
                     <td>{{ $item->tanggalRilis }}</td>
                     <td>{{ $item->duration }}</td>
+                    <td>{{ $item->status }}</td>
                     <td>
                         <a href="{{ route('admin.dashboard.editfilm', $item) }}" class="btn btn-warning">Edit</a>
                         <form action="{{ route('admin.dashboard.film.destroy', $item->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus film ini?');">

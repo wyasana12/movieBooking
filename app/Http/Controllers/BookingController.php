@@ -7,6 +7,7 @@ use App\Models\Schedule;
 use App\Models\Booking;
 use App\Models\Seats;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class BookingController extends Controller
 {
@@ -15,7 +16,13 @@ class BookingController extends Controller
         $schedule = Schedule::findorfail($scheduleId);
         $film = $schedule->film;
         $availableSchedules = Schedule::where('films_id', $film->id)->get();
-        $availableSeats = Seats::where('schedule_id', $scheduleId)->where('status', 'sedia')->get();
+        $availableSeats = Seats::where('schedule_id', $scheduleId)
+            ->select([
+                'id',
+                'seat_number',
+                'status'
+            ])
+            ->get();
         return view('user.booking.index', compact('schedule', 'availableSeats', 'film', 'availableSchedules'));
     }
 
@@ -26,18 +33,17 @@ class BookingController extends Controller
             'seat_id' => 'required|exists:seats,id',
         ]);
 
-        $seat = Seats::findorfail($request->seat_id);
+        $schedule = Schedule::findOrFail($request->schedule_id);
+        $seat = Seats::findOrFail($request->seat_id);
 
         if ($seat->status != 'sedia') {
             return redirect()->back()->withErrors('Kursi sudah dipesan!');
         }
 
-        $schedule = Schedule::with('time_slot')->findOrFail($request->schedule_id);
-        $timeslot = $schedule->time_slot;
-        $totalPrice = $timeslot->price;
+        $totalPrice = $schedule->price;
 
         Booking::create([
-            'user_id' => auth()->id(),
+            'user_id' => Auth::id(),
             'schedule_id' => $schedule->id,
             'seat_id' => $seat->id,
             'total_price' => $totalPrice,
@@ -52,7 +58,7 @@ class BookingController extends Controller
     public function konfirmasi($scheduleId)
     {
         // Ambil semua pemesanan terakhir dari pengguna yang sedang login
-        $booking = Booking::where('user_id', auth()->id())->latest()->first();
+        $booking = Booking::where('user_id', Auth::id())->latest()->first();
 
         if (!$booking) {
             return redirect()->route('user.booking.index', ['scheduleId' => $scheduleId])->withErrors('Tidak ada pemesanan yang ditemukan.');

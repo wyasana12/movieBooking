@@ -17,11 +17,11 @@ class UserMovieController extends Controller
         $query = Film::query();
 
         if ($search) {
-            $query->where('judul', 'like', "{%search%}")
-                ->orWhere('deskripsi', 'like', "{%search%}");
+            $query->where('judul', 'like',  '%' . $search . '%')
+                ->orWhere('deskripsi', 'like',  '%' . $search . '%');
         }
         if ($genre) {
-            $query->where('genre', 'like', "{% search %}");
+            $query->where('genre', 'like',  '%' . $genre . '%');
         }
         if ($tanggalrilis) {
             $query->where('tanggalRilis', '=', $tanggalrilis);

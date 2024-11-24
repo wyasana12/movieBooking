@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('bookings', function(Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('schedule_id')->contrained()->onDelete('cascade');
+            $table->foreignId('schedule_id')->constrained()->onDelete('cascade');
             $table->foreignId('seat_id')->constrained()->onDelete('cascade'); // Relasi dengan tabel seats
             $table->decimal('total_price', 10, 2); // Total harga pemesanan
             $table->enum('status', ['pending', 'confirmed', 'canceled'])->default('pending'); // Status pemesanan
@@ -28,6 +28,5 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('bookings');
-
     }
 };

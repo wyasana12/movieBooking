@@ -17,6 +17,7 @@ class Film extends Model
         'genre',
         'tanggalRilis',
         'duration',
+        'status',
     ];
 
     public function getPosterUrlAttribute()

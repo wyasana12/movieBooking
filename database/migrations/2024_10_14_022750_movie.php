@@ -16,9 +16,10 @@ return new class extends Migration
             $table->string('poster')->nullable();
             $table->string('judul');
             $table->text('deskripsi')->nullable();
-            $table->foreignId('genres_id')->constrained()->onDelete('cascade');
+            $table->string('genre');
             $table->date('tanggalRilis');
             $table->integer('duration');
+            $table->enum('status', ['now playing', 'upcoming', 'expired']);
             $table->rememberToken();
             $table->timestamps();
         });

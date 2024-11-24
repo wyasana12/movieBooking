@@ -14,9 +14,11 @@
                 <tr>
                     <th>No.</th>
                     <th>Film</th>
+                    <th>Studio</th>
                     <th>Tanggal Tayang</th>
                     <th>Jam Tayang</th>
                     <th>Total Kursi</th>
+                    <th>Price</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
@@ -25,9 +27,11 @@
                     <tr>
                         <td>{{ $index + $schedules->firstItem() }}</td>
                         <td>{{ $schedule->film->judul }}</td>
+                        <td>{{ $schedule->studio }}</td>
                         <td>{{ $schedule->show_date }}</td>
                         <td>{{ $schedule->start_time }} - {{ $schedule->end_time }}</td>
                         <td>{{ $schedule->total_seats }}</td>
+                        <td>{{ $schedule->price }}</td>
                         <td>
                             <form action="{{ url('admin/schedules/' . $schedule->id) }}" method="POST"
                                 style="display: inline-block;">
@@ -45,7 +49,7 @@
                 @endforelse
             </tbody>
         </table>
-        
+
         {{ $schedules->links() }}
     </div>
 @endsection
