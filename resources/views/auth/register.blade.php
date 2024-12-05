@@ -1,3 +1,7 @@
+<head>
+    {!! htmlScriptTagJsApi() !!}
+</head>
+
 <x-guest-layout>
     <form method="POST" action="{{ route('register') }}">
         @csrf
@@ -59,6 +63,13 @@
             <x-text-input id="password_confirmation" class="block mt-1 w-full" type="password"
                 name="password_confirmation" required autocomplete="new-password" />
             <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
+        </div>
+
+        <div class="mt-4">
+            {!! htmlFormSnippet() !!}
+            @error('g-recaptcha-response')
+                <small class="text-danger">{{ $message }}</small>
+            @enderror
         </div>
 
         <div class="flex items-center justify-end mt-4">

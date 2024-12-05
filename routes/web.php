@@ -20,6 +20,7 @@ Route::middleware(['auth:web', 'role:user'])->group(function () {
 Route::get('admin/dashboard', function () {
     return view('admin.dashboard');
 });
+
 Route::get('film', [UserMovieController::class, 'index'])->name('user.film.index');
 require __DIR__ . '/auth.php';
 require __DIR__.'/admin.php';

@@ -27,13 +27,13 @@ class Booking extends Model
         return $this->belongsTo(Schedule::class);
     }
 
-    public function seat()
+    public function bookingseat()
     {
-        return $this->belongsTo(Seats::class);
+        return $this->belongsToMany(Seats::class, 'booking-seat', 'booking_id', 'seat_id')->withTimestamps();
     }
 
     public function bookingservice()
     {
-        return $this->belongsToMany(service::class, 'booking-service')->withPivot('jumlah')->withTimestamps();
+        return $this->belongsToMany(service::class, 'booking-service', 'bookings_id', 'service_id')->withPivot('jumlah')->withTimestamps();
     }
 }

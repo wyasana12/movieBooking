@@ -9,6 +9,8 @@ class service extends Model
 {
     use HasFactory;
 
+    protected $table = 'services';
+
     protected $fillable = [
         'nama',
         'price',
@@ -16,6 +18,6 @@ class service extends Model
 
     public function booking()
     {
-        $this->belongsToMany(Booking::class, 'booking-service')->withPivot('jumlah')->withTimestamps();
+        return $this->belongsToMany(Booking::class, 'booking-service', 'service_id', 'bookings_id')->withPivot('jumlah')->withTimestamps();
     }
 }

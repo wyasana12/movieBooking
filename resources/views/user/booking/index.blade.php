@@ -29,7 +29,7 @@
                             <div class="d-flex">
                                 @foreach ($seats as $seat)
                                     <label class="seat me-2">
-                                        <input type="checkbox" name="seat_id" value="{{ $seat->id }}"
+                                        <input type="checkbox" name="seat_id[]" value="{{ $seat->id }}"
                                             @if ($seat->status !== 'sedia') disabled @endif>
                                         <span
                                             class="seat-number btn btn-sm 

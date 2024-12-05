@@ -28,48 +28,60 @@ class BookingController extends Controller
     }
 
     public function store(Request $request)
-{
-    $request->validate([
-        'schedule_id' => 'required|exists:schedules,id',
-        'seat_id' => 'required|exists:seats,id',
-        'service' => 'array',
-        'service.*' => 'exists:service,id',
-    ]);
+    {
+        // Validasi input
+        $request->validate([
+            'schedule_id' => 'required|exists:schedules,id',
+            'seat_id' => 'required|array', // Pastikan seat_id adalah array
+            'seat_id.*' => 'exists:seats,id', // Validasi setiap ID kursi
+            'services' => 'array',
+            'services.*' => 'exists:services,id',
+        ]);
 
-    $schedule = Schedule::findOrFail($request->schedule_id);
-    $seat = Seats::findOrFail($request->seat_id);
+        $schedule = Schedule::findOrFail($request->schedule_id);
 
-    if ($seat->status != 'sedia') {
-        return redirect()->back()->withErrors('Kursi sudah dipesan!');
-    }
+        // Ambil kursi yang dipilih berdasarkan ID
+        $seats = Seats::whereIn('id', $request->seat_id)->get();
 
-    $totalPrice = $schedule->price;
-
-    // Simpan booking
-    $booking = Booking::create([
-        'user_id' => Auth::id(),
-        'schedule_id' => $schedule->id,
-        'seat_id' => $seat->id,
-        'total_price' => $totalPrice,
-        'status' => 'pending'
-    ]);
-
-    $seat->update(['status' => 'tidak tersedia']);
-
-    // Simpan layanan tambahan
-    if ($request->has('service')) {
-        $service = service::find($request->service);
-        foreach ($service as $item) {
-            $booking->service()->attach($item->id, ['price' => $item->price]);
-            $totalPrice += $item->price; // Tambah harga layanan ke total harga
+        // Pastikan semua kursi yang dipilih tersedia
+        foreach ($seats as $seat) {
+            if ($seat->status != 'sedia') {
+                return redirect()->back()->withErrors('Beberapa kursi sudah dipesan!');
+            }
         }
+
+        // Hitung total harga berdasarkan kursi yang dipilih
+        $totalPrice = $schedule->price * count($seats);
+
+        // Simpan booking
+        $booking = Booking::create([
+            'user_id' => Auth::id(),
+            'schedule_id' => $schedule->id,
+            'total_price' => $totalPrice,
+            'status' => 'pending'
+        ]);
+
+        $booking->bookingseat()->attach($seats);
+
+        $seats->each(function ($seat) {
+            $seat->update(['status' => 'tidak tersedia']);
+        });
+
+        if ($request->has('services')) {
+            $services = Service::findMany($request->services);
+            foreach ($services as $service) {
+                // Menambahkan layanan ke booking dengan jumlah
+                $booking->bookingservice()->attach($service->id, ['jumlah' => 1]);
+                $totalPrice += $service->price; // Tambahkan harga layanan ke total
+            }
+        }
+    
+        $booking->update(['total_price' => $totalPrice]);
+
+        return redirect()->route('user.booking.konfirmasi', ['scheduleId' => $schedule->id])
+            ->with('success', 'Pemesanan Berhasil');
     }
 
-    // Perbarui total harga pada booking
-    $booking->update(['total_price' => $totalPrice]);
-
-    return redirect()->route('user.booking.konfirmasi', ['scheduleId' => $schedule->id])->with('success', 'Pemesanan Berhasil');
-}
 
 
     public function konfirmasi($scheduleId)
@@ -82,7 +94,7 @@ class BookingController extends Controller
         }
 
         $schedule = Schedule::with('film')->findOrFail($booking->schedule_id);
-        $seat = Seats::findOrFail($booking->seat_id);
+        $seat = $booking->bookingseat;
         $totalPrice = $booking->total_price;
 
         return view('user.booking.konfirmasi', compact('booking', 'schedule', 'seat', 'totalPrice'));

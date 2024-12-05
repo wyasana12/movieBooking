@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
+use App\Rules\Captcha;
 
 class RegisterController extends Controller
 {
@@ -19,8 +20,9 @@ class RegisterController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:admins',
+            'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
+            'g-recaptcha-response' => 'required|recaptcha',
         ]);
 
         User::create([
