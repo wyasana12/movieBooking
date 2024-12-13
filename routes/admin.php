@@ -12,6 +12,9 @@ Route::prefix('admin')->middleware(['guest:admin'])->group(function () {
 
     Route::get('login', [LoginController::class, 'create'])->name('admin.login');
     Route::post('login', [LoginController::class, 'store']);
+    
+    Route::get('/verify-otp', [RegisterController::class, 'showOTP'])->name('admin.showotp');
+    Route::post('/verify-otp', [RegisterController::class, 'verifyOTP']);
 });
 
 Route::prefix('admin')->middleware(['auth:admin', 'role:admin'])->group(function () {

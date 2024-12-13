@@ -7,6 +7,7 @@ use App\Models\Schedule;
 use App\Models\Booking;
 use App\Models\Seats;
 use App\Models\service;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 class BookingController extends Controller
@@ -75,7 +76,7 @@ class BookingController extends Controller
                 $totalPrice += $service->price; // Tambahkan harga layanan ke total
             }
         }
-    
+
         $booking->update(['total_price' => $totalPrice]);
 
         return redirect()->route('user.booking.konfirmasi', ['scheduleId' => $schedule->id])
@@ -98,5 +99,89 @@ class BookingController extends Controller
         $totalPrice = $booking->total_price;
 
         return view('user.booking.konfirmasi', compact('booking', 'schedule', 'seat', 'totalPrice'));
+    }
+
+    public function show()
+    {
+        $bookings = Booking::where('user_id', Auth::id())
+            ->with(['schedule.film', 'bookingseat', 'bookingservice'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('user.booking.list', compact('bookings'));
+    }
+
+    public function edit($id)
+    {
+        $booking = Booking::findOrFail($id);
+        $scheduleDate = $booking->schedule->date;
+
+        if ($scheduleDate > now()->toDateString()) {
+            return redirect()->back()->withErrors('Pemesanan Sudah Tidak Dapat Diedit');
+        }
+
+        $availableSeats = Seats::where('schedule_id', $booking->schedule_id)->where('status', 'sedia')->get();
+        $services = service::all();
+
+        return view('user.booking.edit', compact('booking', 'availableSeats', 'services', 'scheduleDate'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $booking = Booking::findOrFail($id);
+        $scheduleDate = $booking->schedule->date;
+
+        if ($scheduleDate > now()->toDateString()) {
+            return redirect()->back()->withErrors('Pemesanan Sudah Tidak Dapat Diedit');
+        }
+
+        $request->validate([
+            'seat_id' => 'required|array',
+            'seat_id.*' => 'exists:seats,id',
+            'services' => 'array',
+            'services.*' => 'exists:services,id',
+        ]);
+
+        $booking->bookingseat->each(function ($seat) {
+            $seat->update(['status' => 'sedia']);
+        });
+
+        $booking->bookingseat()->detach();
+
+        $seats = Seats::whereIn('id', $request->seat_id)->get();
+        foreach ($seats as $item) {
+            $item->update(['status' => 'tidak tersedia']);
+        }
+
+        $booking->bookingseat()->attach($seats);
+
+        if ($request->has('services')) {
+            $booking->bookingservice()->detach();
+            foreach ($request->services as $item) {
+                $booking->bookingservice()->attach($item, ['jumlah' => 1]);
+            }
+        }
+
+        return redirect()->route('user.booking.konfirmasi', ['scheduleId' => $booking->schedule_id])->with('success', 'Pemesanan berhasil diperbarui');
+    }
+
+    public function destroy($id)
+    {
+        $booking = Booking::findOrFail($id);
+        $scheduleDate = $booking->schedule->date;
+
+        if ($scheduleDate > now()->toDateString()) {
+            return redirect()->back()->withErrors('Pemesanan tidak dapat dihapus setelah tanggal jadwal.');
+        }
+
+        $booking->bookingseat->each(function ($seat) {
+            $seat->update(['status' => 'sedia']);
+        });
+
+        $booking->bookingseat()->detach();
+        $booking->bookingservice()->detach();
+        $booking->delete();
+
+        return redirect()->route('user.booking.konfirmasi', ['scheduleId' => $booking->schedule_id])->with('success', 'Pemesanan berhasil dihapus.');
     }
 }

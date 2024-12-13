@@ -88,6 +88,7 @@ class MovieController extends Controller
 
     public function destroy(string $id)
     {
+        
         $movie = Film::findOrFail($id);
         $movie->delete();
         return response()->json([

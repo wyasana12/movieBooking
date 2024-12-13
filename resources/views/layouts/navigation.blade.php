@@ -18,6 +18,9 @@
                     <x-nav-link :href="route('user.film.index')" :active="request()->routeIs('films.index')">
                         {{ __('Films') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('user.booking.list')" :active="request()->routeIs('booking.list')">
+                        {{ __('Booking') }}
+                    </x-nav-link>
                 </div>
             </div>
 
@@ -98,6 +101,9 @@
             <x-responsive-nav-link :href="route('user.film.index')" :active="request()->routeIs('films.index')">
                 {{ __('Films') }}
             </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('user.booking.list')" :active="request()->routeIs('booking.list')">
+            {{ __('Booking') }}
+        </x-responsive-nav-link>
         </div>
 
         <!-- Responsive Settings Options -->
@@ -111,7 +117,7 @@
                     <x-responsive-nav-link :href="route('profile.edit')" class="text-indigo-500 hover:text-indigo-700">
                         {{ __('Profile') }}
                     </x-responsive-nav-link>
-
+                    
                     <!-- Authentication -->
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
