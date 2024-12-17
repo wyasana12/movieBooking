@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\LoginController;
 use App\Http\Controllers\Admin\RegisterController;
+use App\Http\Controllers\BackupRestoreController;
 use App\Http\Controllers\MovieController;
 use App\Http\Controllers\SchedulesController;
 
@@ -12,7 +13,7 @@ Route::prefix('admin')->middleware(['guest:admin'])->group(function () {
 
     Route::get('login', [LoginController::class, 'create'])->name('admin.login');
     Route::post('login', [LoginController::class, 'store']);
-    
+
     Route::get('/verify-otp', [RegisterController::class, 'showOTP'])->name('admin.showotp');
     Route::post('/verify-otp', [RegisterController::class, 'verifyOTP']);
 });
@@ -32,5 +33,14 @@ Route::prefix('admin')->middleware(['auth:admin', 'role:admin'])->group(function
     Route::get('schedules/create', [SchedulesController::class, 'create'])->name('admin.dashboard.createschedules');
     Route::post('schedules/store', [SchedulesController::class, 'store']);
     Route::delete('schedules/{id}', [SchedulesController::class, 'destroy']);
+
+    Route::get('/backups', [BackupRestoreController::class, 'listBackups'])->name('admin.backup-list');
+    Route::get('/backup/download/{filename}', [BackupRestoreController::class, 'downloadBackup'])
+        ->name('backup.download');
+    Route::delete('/backup/delete/{filename}', [BackupRestoreController::class, 'deleteBackup'])
+        ->name('backup.delete');
+    Route::get('/backup/create', [BackupRestoreController::class, 'backup'])->name('backup');
+    Route::post('/restore', [BackupRestoreController::class, 'restore'])->name('restore');
+
     Route::post('logout', [LoginController::class, 'destroy'])->name('admin.logout');
 });

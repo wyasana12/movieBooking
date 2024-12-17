@@ -33,12 +33,12 @@
         </a>
       </li>
       
-      {{-- <li class="nav-item">
-        <a class="nav-link collapsed" href="{{ url('admin/jadwal') }}">
-          <i class="bi bi-megaphone"></i>
-          <span>jadwal</span>
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{{ url('admin/backups') }}">
+          <i class="bi bi-database"></i>
+          <span>Backup dan Restore</span>
         </a>
-      </li><!-- End Role Page Nav --> --}}
+      </li><!-- End Role Page Nav -->
     </ul>
 
   </aside><!-- End Sidebar-->
